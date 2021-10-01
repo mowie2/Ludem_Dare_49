@@ -28,6 +28,20 @@ public class TileGenerator : MonoBehaviour
                 TileSprite.sprite = Resources.Load<Sprite>("Grass");
                 TileSprite.sortingLayerName = "Ground";
 
+                if(Random.Range(0,10) == 1)
+                {
+                    GameObject Rock = new GameObject("Rock");
+              
+                    SpriteRenderer RockSprite = Rock.AddComponent<SpriteRenderer>();
+                    RockSprite.sprite = Resources.Load<Sprite>("Rock");
+                    RockSprite.sortingLayerName = "Ground";
+                    RockSprite.sortingOrder = 1;
+
+                    Rock.AddComponent<PolygonCollider2D>();
+                    Rock.transform.position = new Vector2(x, y);
+
+                }
+
             }
         }
     }
