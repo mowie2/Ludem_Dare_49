@@ -1,14 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
     private float playerSpeed;
+    private int KeysFound;
     // Start is called before the first frame update
     void Start()
     {
         playerSpeed = 5;
+        KeysFound = 0;
     }
 
     // Update is called once per frame
@@ -40,5 +43,21 @@ public class PlayerMovement : MonoBehaviour
     {
         transform.Translate(direction * deltaTime * speed, Space.World);
 
+    }
+
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.gameObject.name == "Portal" && KeysFound == 3)
+        {
+            //If the GameObject's name matches the one you suggest, output this message in the console
+            Debug.Log("level complete");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        if (col.gameObject.name == "Key")
+        {
+            KeysFound++;
+            Destroy(col.gameObject);
+        }
     }
 }
