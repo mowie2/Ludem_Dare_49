@@ -18,11 +18,12 @@ public class TileGenerator : MonoBehaviour
         pointsOfIntress = new List<Vector2>();
         GenerateTiles(mapSizeX, mapSizeY);
 
-        GeneratePortal(new Vector2(Random.Range(0, mapSizeX), Random.Range(0, mapSizeY)));
+        GeneratePortal(new Vector2(Random.Range(1, mapSizeX-1), Random.Range(1, mapSizeY-1)));
 
-        GenerateKey(new Vector2(Random.Range(0, mapSizeX), Random.Range(0, mapSizeY)));
-        GenerateKey(new Vector2(Random.Range(0, mapSizeX), Random.Range(0, mapSizeY)));
-        GenerateKey(new Vector2(Random.Range(0, mapSizeX), Random.Range(0, mapSizeY)));
+        GenerateKey(new Vector2(Random.Range(1, mapSizeX-1), Random.Range(1, mapSizeY-1)));
+        GenerateKey(new Vector2(Random.Range(1, mapSizeX-1), Random.Range(1, mapSizeY-1)));
+        GenerateKey(new Vector2(Random.Range(1, mapSizeX-1), Random.Range(1, mapSizeY-1)));
+
     }
 
     // Update is called once per frame
