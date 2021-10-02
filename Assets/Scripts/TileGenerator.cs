@@ -7,6 +7,8 @@ public class TileGenerator : MonoBehaviour
     // Start is called before the first frame update
 
     Dictionary<Vector2, List<GameObject>> worldMap;
+
+    Dictionary<Vector2, List<GameObject>> voidTiles;
     List<Vector2> pointsOfIntress;
     float timeRemaining = .5f;
     float tileDestructionTime = .2f;
@@ -15,14 +17,16 @@ public class TileGenerator : MonoBehaviour
     void Start()
     {
         worldMap = new Dictionary<Vector2, List<GameObject>>();
+        voidTiles = new Dictionary<Vector2, List<GameObject>>();
         pointsOfIntress = new List<Vector2>();
+        GeneratePortal(new Vector2(Random.Range(1, mapSizeX - 1), Random.Range(1, mapSizeY - 1)));
+
+        GenerateKey(new Vector2(Random.Range(1, mapSizeX - 1), Random.Range(1, mapSizeY - 1)));
+        GenerateKey(new Vector2(Random.Range(1, mapSizeX - 1), Random.Range(1, mapSizeY - 1)));
+        GenerateKey(new Vector2(Random.Range(1, mapSizeX - 1), Random.Range(1, mapSizeY - 1)));
+
         GenerateTiles(mapSizeX, mapSizeY);
 
-        GeneratePortal(new Vector2(Random.Range(1, mapSizeX-1), Random.Range(1, mapSizeY-1)));
-
-        GenerateKey(new Vector2(Random.Range(1, mapSizeX-1), Random.Range(1, mapSizeY-1)));
-        GenerateKey(new Vector2(Random.Range(1, mapSizeX-1), Random.Range(1, mapSizeY-1)));
-        GenerateKey(new Vector2(Random.Range(1, mapSizeX-1), Random.Range(1, mapSizeY-1)));
 
     }
 
@@ -47,14 +51,9 @@ public class TileGenerator : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                if (pointsOfIntress.Contains(new Vector2(x, y)))
-                {
-                    continue;
-                }
-
                 GenerateGrass(new Vector2(x, y));
 
-                if (Random.Range(0, 10) == 1)
+                if (Random.Range(0, 10) == 1 && !pointsOfIntress.Contains(new Vector2(x, y)))
                 {
                     GenerateRock(new Vector2(x, y));
                 }
@@ -150,6 +149,23 @@ public class TileGenerator : MonoBehaviour
         }
     }
 
+    private void AddVoidTilesToDictonary(Vector2 location, GameObject tile)
+    {
+        if (voidTiles.ContainsKey(location))
+        {
+            List<GameObject> worldMapGameObjects;
+            voidTiles.TryGetValue(location, out worldMapGameObjects);
+            worldMapGameObjects.Add(tile);
+            voidTiles.Remove(location);
+            voidTiles.Add(location, worldMapGameObjects);
+        }
+        else
+        {
+            List<GameObject> aa = new List<GameObject>();
+            aa.Add(tile);
+            voidTiles.Add(location, aa);
+        }
+    }
     public void RemoveObjectsAtlocation(Vector2 location)
     {
         if (!worldMap.ContainsKey(location))
@@ -173,7 +189,7 @@ public class TileGenerator : MonoBehaviour
         GenerateVoid(location);
     }
 
-    private void GenerateVoid(Vector2 location)
+    public void GenerateVoid(Vector2 location)
     {
         GameObject Void = new GameObject("Void");
         SpriteRenderer VoidSprite = Void.AddComponent<SpriteRenderer>();
@@ -183,13 +199,55 @@ public class TileGenerator : MonoBehaviour
 
         Void.AddComponent<PolygonCollider2D>();
         Void.transform.position = location;
+
+        AddVoidTilesToDictonary(location, Void);
     }
 
+    public void RemoveVoid(Vector2 location)
+    {
+        if (!voidTiles.ContainsKey(location))
+        {
+            return;
+        }
+        voidTiles.TryGetValue(location, out List<GameObject> voidGameobjects);
+
+        voidTiles.Remove(location);
+
+        for (int i = voidGameobjects.Count; i-- > 0;)
+        {
+            Destroy(voidGameobjects[i]);
+        }
+    }
     private Vector2 GetRandomDictionarKey()
     {
+        List<Vector2> border = new List<Vector2>();
+
+        for (int x = 0; x < mapSizeX; x++)
+        {
+            for (int y = 0; y < mapSizeY; y++)
+            {
+
+                if (x == 0)
+                {
+                    border.Add(new Vector2(x, y));
+                }
+                if (y == 0)
+                {
+                    border.Add(new Vector2(x, y));
+                }
+                if (x == mapSizeX - 1)
+                {
+                    border.Add(new Vector2(x, y));
+                }
+                if (y == mapSizeY - 1)
+                {
+                    border.Add(new Vector2(x, y));
+                }
+            }
+        }
         Vector2 RandomLocation = new Vector2(Random.Range(0, mapSizeX), Random.Range(0, mapSizeY));
 
-        if (worldMap.ContainsKey(RandomLocation) && !pointsOfIntress.Contains(RandomLocation))
+        if (worldMap.ContainsKey(RandomLocation) && !pointsOfIntress.Contains(RandomLocation) && !border.Contains(RandomLocation))
         {
             return RandomLocation;
         }

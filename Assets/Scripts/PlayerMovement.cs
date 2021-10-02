@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -37,6 +38,45 @@ public class PlayerMovement : MonoBehaviour
         {
             MoveInDiction(Vector2.up, Time.deltaTime, playerSpeed);
         }
+
+        if (Input.GetKey(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        if (Input.GetKey(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            TileGenerator tileGenerator = GameObject.Find("WorldScripts").GetComponent<TileGenerator>();
+
+            int xPosition = Convert.ToInt32(gameObject.transform.position.x);
+            int yPosition = Convert.ToInt32(gameObject.transform.position.y);
+
+            List<Vector2> positionsToCheck = new List<Vector2>();
+
+            positionsToCheck.Add(new Vector2(xPosition, yPosition));
+            positionsToCheck.Add(new Vector2(xPosition -1, yPosition));
+            positionsToCheck.Add(new Vector2(xPosition -1, yPosition -1));
+            positionsToCheck.Add(new Vector2(xPosition, yPosition -1));
+            positionsToCheck.Add(new Vector2(xPosition +1, yPosition));
+            positionsToCheck.Add(new Vector2(xPosition +1, yPosition+1));
+            positionsToCheck.Add(new Vector2(xPosition, yPosition+1));
+            positionsToCheck.Add(new Vector2(xPosition-1, yPosition+1));
+            positionsToCheck.Add(new Vector2(xPosition+1, yPosition-1));
+
+            foreach(Vector2 location in positionsToCheck)
+            {
+                tileGenerator.RemoveVoid(location);
+                tileGenerator.GenerateGrass(location);
+            }
+            
+            
+        }
+
     }
 
     private void MoveInDiction(Vector2 direction, float deltaTime, float speed = 1)
